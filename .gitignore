@@ -1,1 +1,6 @@
 3rdparty/
+floppy.img
+kernel.bin
+*.o
+pad
+pad2

@@ -25,4 +25,7 @@ clean:
 	rm -f pad2 pad kernel.bin kernel.o loader.o floppy.img
 
 run: floppy.img
-	VBoxManage startvm "os test"
+	size=`cat kernel.bin | wc --bytes`; \
+	let size/=512; \
+	echo Blocks: $$size; 
+	VBoxManage startvm "os test";

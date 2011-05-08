@@ -17,8 +17,11 @@ pad:
 	dd if=/dev/zero of=pad bs=1 count=750
 
 pad2: kernel.bin pad stage1 stage2
-	size=`cat kernel.bin pad stage1 stage2 | wc --bytes`; \
-	size=$$((1474560-$$size)); \
+	kernel_size=$$(stat -c%s "kernel.bin"); \
+	pad_size=$$(stat -c%s "pad"); \
+	stage1_size=$$(stat -c%s "stage1"); \
+	stage2_size=$$(stat -c%s "stage2"); \
+	size=$$((1474560-$$kernel_size-$$pad_size-$$stage1_size-$$stage2_size)); \
 	dd if=/dev/zero of=pad2 bs=1 count=$$size;
 
 clean:

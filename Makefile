@@ -7,7 +7,7 @@ kernel.bin: kernel.o linker.ld loader.o
 
 kernel.o: kernel.c
 	gcc -o kernel.o -c kernel.c -Wall -Wextra -nostdlib \
-	-nostartfiles -nodefaultlibs -m32 -Werror
+	-nostartfiles -nodefaultlibs -m32
 
 loader.o: loader.s
 	nasm -f elf -o loader.o loader.s

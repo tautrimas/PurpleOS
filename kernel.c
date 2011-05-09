@@ -60,7 +60,13 @@ void kmain( void* mbd, unsigned int magic )
 //     for (i = 0; i < 80; i++) {
 //     }
     clearScreen();
-    writeString(0, 0, "labas (:");
-
+    
+    float f = 1.6 * 6.6;
+    if (f < 11.) {
+	writeString(0, 0, "labas (:");
+    }
+//     int a = (int)f;
+//     writeChar(0, 1, (char)a + '0');
+    
    /* Write your kernel here. */
 }

@@ -6,11 +6,11 @@ kernel.bin: kernel.o linker.ld loader.o
 	ld -T linker.ld -o $@ loader.o kernel.o -melf_i386
 
 kernel.o: kernel.c
-	gcc -o kernel.o -c kernel.c -Wall -Wextra -nostdlib \
+	gcc -o $@ -c kernel.c -Wall -Wextra -nostdlib \
 	-nostartfiles -nodefaultlibs -m32
 
 loader.o: loader.s
-	nasm -f elf -o loader.o loader.s
+	nasm -f elf -o $@ loader.s
 
 clean:
 	rm -f kernel.bin kernel.o loader.o floppy.img

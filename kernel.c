@@ -1,5 +1,13 @@
 #include "util.c"
 
+int globalA;
+
+void dummyFunction() {
+//     asm volatile ("dummyFunction:");
+    globalA++;
+    asm volatile ("jmp kmain2");
+}
+
 void kmain( void* mbd, unsigned int magic )
 {
     if ( magic != 0x2BADB002)
@@ -22,8 +30,10 @@ void kmain( void* mbd, unsigned int magic )
 //     }
     clearScreen();
     
-    float f = 1.6 * 6.6;
-    if (f < 11.) {
+    asm volatile ("jmp dummyFunction" : : : "memory", "cc");
+    asm volatile ("kmain2:");
+    
+    if (globalA == 1) {
 	writeString(0, 0, "labas (:");
     }
 //     int a = (int)f;

@@ -1,5 +1,7 @@
 #include "util.c"
 
+extern int Sum();
+
 void kmain( void* mbd, unsigned int magic )
 {
     if ( magic != 0x2BADB002)
@@ -22,8 +24,8 @@ void kmain( void* mbd, unsigned int magic )
 //     }
     clearScreen();
     
-    float f = 1.6 * 6.6;
-    if (f < 11.) {
+    int a = Sum(8, 500);
+    if (a == 508) {
 	writeString(0, 0, "labas (:");
     }
 //     int a = (int)f;

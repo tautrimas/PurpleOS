@@ -9,7 +9,6 @@ MAGIC       equ    0x1BADB002           ; 'magic number' lets bootloader find th
 CHECKSUM    equ -(MAGIC + FLAGS)        ; checksum required
  
 section .text
-bits 32
 align 4
 MultiBootHeader:
    dd MAGIC

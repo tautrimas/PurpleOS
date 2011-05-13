@@ -1,36 +1,34 @@
-global loader           ; making entry point visible to linker
-extern kmain            ; kmain is defined elsewhere
+.global loader           # making entry point visible to linker
+.extern kmain            # kmain is defined elsewhere
  
-; setting up the Multiboot header - see GRUB docs for details
-MODULEALIGN equ  1<<0                   ; align loaded modules on page boundaries
-MEMINFO     equ  1<<1                   ; provide memory map
-FLAGS       equ  MODULEALIGN | MEMINFO  ; this is the Multiboot 'flag' field
-MAGIC       equ    0x1BADB002           ; 'magic number' lets bootloader find the header
-CHECKSUM    equ -(MAGIC + FLAGS)        ; checksum required
+# setting up the Multiboot header - see GRUB docs for details
+.set MODULEALIGN, 1<<0                   # align loaded modules on page boundaries
+.set MEMINFO, 1<<1                   # provide memory map
+.set FLAGS, MODULEALIGN | MEMINFO  # this is the Multiboot 'flag' field
+.set MAGIC, 0x1BADB002           # 'magic number' lets bootloader find the header
+.set CHECKSUM, -(MAGIC + FLAGS)        # checksum required
  
-section .text
-align 4
+.text
 MultiBootHeader:
-   dd MAGIC
-   dd FLAGS
-   dd CHECKSUM
+   .long MAGIC
+   .long FLAGS
+   .long CHECKSUM
  
-; reserve initial kernel stack space
-STACKSIZE equ 0x4000                  ; that's 16k.
+# reserve initial kernel stack space
+.set STACKSIZE, 0x4000                  # that's 16k.
  
 loader:
-   mov esp, stack+STACKSIZE           ; set up the stack
-   push eax                           ; pass Multiboot magic number
-   push ebx                           ; pass Multiboot info structure
+   movl $(stack + STACKSIZE), %esp          # set up the stack
+   push %eax                           # pass Multiboot magic number
+   push %ebx                           # pass Multiboot info structure
  
-   call  kmain                       ; call kernel proper
+   call  kmain                       # call kernel proper
  
    cli
 hang:
-   hlt                                ; halt machine should kernel return
+   hlt                                # halt machine should kernel return
    jmp   hang
  
-section .bss
-align 4
+.bss
 stack:
-   resb STACKSIZE                     ; reserve 16k stack on a doubleword boundary
+   .lcomm stack_area, STACKSIZE                     # reserve 16k stack on a doubleword boundary

@@ -10,7 +10,7 @@ kernel.o: kernel.c util.c
 	-nostartfiles -nodefaultlibs -m32
 
 loader.o: loader.s
-	nasm -f elf -o $@ loader.s
+	as --32 -o $@ loader.s
 	
 floppy.img: kernel.bin
 	sudo sh create_floppy.sh

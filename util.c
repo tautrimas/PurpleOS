@@ -84,6 +84,19 @@ void clearScreen (void)
   ypos = 0;
 }
 
+#define outb(value, port) __asm__ ( \
+"outb    %%al,    %%dx\n\t"::"al"(value), "dx"(port))
+ 
+void 
+setCursor(int x, int y) {
+    xpos = x;
+    ypos = y;
+    outb(0x0e, 0x3d4);
+    outb(((xpos+ypos*COLUMNS)>>8)&0xff, 0x3d5);
+    outb(0x0f, 0x3d4);
+    outb(((xpos+ypos*COLUMNS))&0xff, 0x3d5);
+}
+
 /* Put the character C on the screen.  */
 static void
 putchar (int c)

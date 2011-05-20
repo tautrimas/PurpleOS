@@ -25,5 +25,5 @@ void kmain( void* mbd, unsigned int magic )
     int addr;
 //     asm("call magic; magic: pop %%eax; movl %%eax, %0;" : "=r"(addr) : : "eax");
     asm("movl %%ss, %0;" : "=r"(addr) : : );
-    printf("Register: %x\n", addr);
+    printf("Register ss: %x\n", addr);
 }

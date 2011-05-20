@@ -1,4 +1,7 @@
 #include "monitor.h"
+#include "descriptor_tables.h"
+#include "common.h"
+#include "timer.h"
 
 void kmain(void* mbd)
 {

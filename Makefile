@@ -2,7 +2,7 @@
 
 all: floppy.img
 
-srcs=src/kernel.c src/monitor.c src/common.c src/descriptor_tables.c src/isr.c
+srcs=src/kernel.c src/monitor.c src/common.c src/descriptor_tables.c src/isr.c src/timer.c
 objs=$(srcs:.c=.o)
 srcs_nasm=src/gdt.s src/interrupt.s
 objs_nasm=$(srcs_nasm:.s=.o)

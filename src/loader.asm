@@ -13,6 +13,7 @@
 
 # More constants from tutorial
 
+.balign 4
 
 mboot:
     .long MBOOT_HEADER_MAGIC

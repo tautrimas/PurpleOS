@@ -1,12 +1,11 @@
 #include "monitor.h"
 #include "descriptor_tables.h"
-#include "common.h"
 #include "timer.h"
 
-void kmain(void* mbd)
+void kmain(void *mboot_ptr)
 {
     // dummy stuff
-    if ((int)mbd == 4684684) {}
+    if ((int)mboot_ptr == 4684684) {}
     
     // Initialise all the ISRs and segmentation
     init_descriptor_tables();

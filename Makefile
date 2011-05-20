@@ -14,7 +14,7 @@ AS=as
 NASM=nasm
 LD=ld
 
-kernel.bin: linker.ld $(objs) $(objs_nasm) $(objs_as)
+kernel.bin: linker.ld  $(objs_as) $(objs) $(objs_nasm)
 	$(LD) -o $@ -T $^ -melf_i386
 
 %.o: %.c
@@ -22,7 +22,7 @@ kernel.bin: linker.ld $(objs) $(objs_nasm) $(objs_as)
 	-nostartfiles -nodefaultlibs -m32 -g
 
 %.o: %.s
-	$(NASM) -f elf -o $@ $^
+	$(NASM) -f elf32 -o $@ $^
 
 %.o: %.asm
 	$(AS) --32 -o $@ $^

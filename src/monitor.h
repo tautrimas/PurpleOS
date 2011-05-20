@@ -17,7 +17,7 @@ void monitor_write(char *c);
 
 void itoa(char *result, char base, int d);
 
-void printf (const char *format, ...);
+int printf (const char *format, ...);
 
 void monitor_write_hex(u32int n);
 

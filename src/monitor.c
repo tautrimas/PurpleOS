@@ -165,8 +165,7 @@ void itoa(char *result, char base, int d) {
 
 /* Format a string and print it on the screen, just like the libc
    function printf.  */
-void
-printf (const char *format, ...)
+int printf (const char *format, ...)
 {
   char **arg = (char **) &format;
   int c;
@@ -209,6 +208,7 @@ printf (const char *format, ...)
             }
         }
     }
+  return strlen(buf);
 }
 
 void monitor_write_hex(u32int n)

@@ -23,38 +23,77 @@ u16int inw(u16int port)
     return ret;
 }
 
-/*// Copy len bytes from src to dest.
-void memcpy(u8int *dest, const u8int *src, u32int len)
+// Copy len bytes from src to dest.
+extern inline void* memcpy(u8int *dest, const u8int *src, u32int n)
 {
-    // TODO: implement this yourself!
+    __asm__("cld\n\t"
+        "rep\n\t"
+        "movsb"
+        ::"c" (n),"S" (src),"D" (dest)
+        :"cx","si","di");
+    return dest;
 }
 
 // Write len copies of val into dest.
-void memset(u8int *dest, u8int val, u32int len)
+extern inline void* memset(void * s,char c,int count)
 {
-    // TODO: implement this yourself!
+    __asm__("cld\n\t"
+        "rep\n\t"
+        "stosb"
+        ::"a" (c),"D" (s),"c" (count)
+        :"cx","di");
+    return s;
 }
 
 // Compare two strings. Should return -1 if 
 // str1 < str2, 0 if they are equal or 1 otherwise.
-int strcmp(char *str1, char *str2)
+extern inline int strcmp(char *cs, char *ct)
 {
-    // TODO: implement this yourself!
+    register int __res __asm__("ax");
+    __asm__("cld\n"
+        "1:\tlodsb\n\t"
+        "scasb\n\t"
+        "jne 2f\n\t"
+        "testb %%al,%%al\n\t"
+        "jne 1b\n\t"
+        "xorl %%eax,%%eax\n\t"
+        "jmp 3f\n"
+        "2:\tmovl $1,%%eax\n\t"
+        "jl 3f\n\t"
+        "negl %%eax\n"
+        "3:"
+        :"=a" (__res):"D" (cs),"S" (ct):"si","di");
+    return __res;
 }
 
 // Copy the NULL-terminated string src into dest, and
 // return dest.
-char *strcpy(char *dest, const char *src)
+extern inline char *strcpy(char *dest, const char *src)
 {
-    // TODO: implement this yourself!
+    __asm__("cld\n"
+        "1:\tlodsb\n\t"
+        "stosb\n\t"
+        "testb %%al,%%al\n\t"
+        "jne 1b"
+        ::"S" (src),"D" (dest):"si","di","ax");
+    return dest;
 }
 
 // Concatenate the NULL-terminated string src onto
 // the end of dest, and return dest.
-char *strcat(char *dest, const char *src)
+extern inline char *strcat(char *dest, const char *src)
 {
-    // TODO: implement this yourself!
-}*/
+    __asm__("cld\n\t"
+        "repne\n\t"
+        "scasb\n\t"
+        "decl %1\n"
+        "1:\tlodsb\n\t"
+        "stosb\n\t"
+        "testb %%al,%%al\n\t"
+        "jne 1b"
+        ::"S" (src),"D" (dest),"a" (0),"c" (0xffffffff):"si","di","ax","cx");
+    return dest;
+}
 
 int max(int a, int b) {
     if (a > b) return a;
@@ -66,9 +105,20 @@ int min(int a, int b) {
     else return b;
 }
 
-int strlen(char* str) {
-    int i;
-    for (i = 0; str[i] != 0; i++) {}
-    return i;
+extern inline int strlen(const char * s)
+{
+register int __res __asm__("cx");
+__asm__("cld\n\t"
+        "repne\n\t"
+        "scasb\n\t"
+        "notl %0\n\t"
+        "decl %0"
+        :"=c" (__res):"D" (s),"a" (0),"0" (0xffffffff):"di");
+return __res;
 }
+// int strlen(char* str) {
+//     int i;
+//     for (i = 0; str[i] != 0; i++) {}
+//     return i;
+// }
 

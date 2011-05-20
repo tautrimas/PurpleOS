@@ -17,13 +17,13 @@ kernel.bin: linker.ld src/loader.o $(objs)
 	-nostartfiles -nodefaultlibs -m32
 
 src/loader.o: src/loader.s
-	$(as) --32 -o $@ $^
+	$(AS) --32 -o $@ $^
 	
 floppy.img: kernel.bin
 	sudo sh create_floppy.sh
 
 clean:
-	rm -f kernel.bin $(objs) loader.o floppy.img
+	rm -f kernel.bin $(objs) src/loader.o floppy.img
 
 run: floppy.img
 	VBoxManage startvm "os test";

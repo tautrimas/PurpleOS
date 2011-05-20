@@ -19,6 +19,6 @@ u16int inw(u16int port);
 
 int max(int a, int b);
 int min(int a, int b);
-int strlen(char* str);
+extern inline int strlen(const char* str);
 
 #endif // COMMON_H

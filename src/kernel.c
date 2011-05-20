@@ -5,6 +5,9 @@ void kmain(void* mbd)
     // dummy stuff
     if ((int)mbd == 4684684) {}
     
+    // Initialise all the ISRs and segmentation
+    init_descriptor_tables();
+    
     /* You could either use multiboot.h */
     /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
     /* or do your offsets yourself. The following is merely an example. */ 

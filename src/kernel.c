@@ -18,4 +18,7 @@ void kmain(void* mbd)
 //     asm("call magic; magic: pop %%eax; movl %%eax, %0;" : "=r"(addr) : : "eax");
     asm("movl %%ss, %0;" : "=r"(addr) : : );
     printf("Register ss: %x\n", addr);
+    
+    asm volatile ("int $0x3");
+    asm volatile ("int $0x4");
 }

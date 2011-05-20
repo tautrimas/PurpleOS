@@ -17,4 +17,8 @@ void outb(u16int port, u8int value);
 u8int inb(u16int port);
 u16int inw(u16int port);
 
+int max(int a, int b);
+int min(int a, int b);
+int strlen(char* str);
+
 #endif // COMMON_H

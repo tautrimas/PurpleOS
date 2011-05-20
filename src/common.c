@@ -23,7 +23,7 @@ u16int inw(u16int port)
     return ret;
 }
 
-// Copy len bytes from src to dest.
+/*// Copy len bytes from src to dest.
 void memcpy(u8int *dest, const u8int *src, u32int len)
 {
     // TODO: implement this yourself!
@@ -54,4 +54,21 @@ char *strcpy(char *dest, const char *src)
 char *strcat(char *dest, const char *src)
 {
     // TODO: implement this yourself!
+}*/
+
+int max(int a, int b) {
+    if (a > b) return a;
+    else return b;
 }
+
+int min(int a, int b) {
+    if (a < b) return a;
+    else return b;
+}
+
+int strlen(char* str) {
+    int i;
+    for (i = 0; str[i] != 0; i++) {}
+    return i;
+}
+

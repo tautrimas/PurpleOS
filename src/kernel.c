@@ -1,4 +1,4 @@
-#include "util.c"
+#include "monitor.h"
 
 void kmain(void* mbd)
 {
@@ -10,7 +10,7 @@ void kmain(void* mbd)
     /* or do your offsets yourself. The following is merely an example. */ 
     //char * boot_loader_name =(char*) ((long*)mbd)[16];
 
-    clearScreen();
+    monitor_clear();
     
 //     asm volatile ("jmp dummyFunctionL" : : : "memory", "cc");
     

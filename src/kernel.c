@@ -1,15 +1,7 @@
 #include "util.c"
 
-void kmain( void* mbd, unsigned int magic )
+void kmain(void* mbd)
 {
-    if ( magic != 0x2BADB002)
-    {
-	/* Something went not according to specs. Print an error */
-	/* message and halt, but do *not* rely on the multiboot */
-	/* data structure. */
-	return;
-    }
-    
     // dummy stuff
     if ((int)mbd == 4684684) {}
     

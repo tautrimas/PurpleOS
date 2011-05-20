@@ -24,4 +24,7 @@ void kmain(void* mbd)
     
     asm volatile ("int $0x3");
     asm volatile ("int $0x4");
+    
+    asm volatile("sti");
+    init_timer(50);
 }

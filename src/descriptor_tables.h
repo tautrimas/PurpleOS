@@ -5,11 +5,13 @@
 //                       Rewritten for JamesM's kernel development tutorials.
 //
 
+#ifndef DESCRIPTOR_TABLES_H
+#define DESCRIPTOR_TABLES_H
+
 #include "common.h"
 
 // Initialisation function is publicly accessible.
 void init_descriptor_tables();
-
 
 // This structure contains the value of one GDT entry.
 // We use the attribute 'packed' to tell GCC not to change
@@ -109,4 +111,4 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-
+#endif

@@ -52,7 +52,7 @@ static void scroll()
 }
 
 // Writes a single character out to the screen.
-void monitor_put(char c)
+void monitor_put(const char c)
 {
     // The background colour is black (0), the foreground is white (15).
     u8int backColour = 0;
@@ -134,7 +134,7 @@ void monitor_clear()
 }
 
 // Outputs a null-terminated ASCII string to the monitor.
-void monitor_write(char *c)
+void monitor_write(const char *c)
 {
     int i = 0;
     while (c[i])
@@ -143,7 +143,7 @@ void monitor_write(char *c)
     }
 }
 
-void itoa(char *result, char base, int d) {
+void itoa(char *result, const char base, const int d) {
     char* digits = "0123456789abcdef";
     int size = 0;
     int copy = d;
@@ -153,10 +153,11 @@ void itoa(char *result, char base, int d) {
     }
     size = max(size, 1);
     
+    copy = d;
     int i = 0;
     while (i < size) {
-        char digit = digits[d % base];
-        d /= base;
+        char digit = digits[copy % base];
+        copy /= base;
         result[size - i - 1] = digit;
         i++;
     }
@@ -211,12 +212,12 @@ int printf (const char *format, ...)
   return strlen(buf);
 }
 
-void monitor_write_hex(u32int n)
+void monitor_write_hex(const u32int n)
 {
     printf("%x", n);
 }
 
-void monitor_write_dec(u32int n)
+void monitor_write_dec(const u32int n)
 {
     printf("%d", n);
 }

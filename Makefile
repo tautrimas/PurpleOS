@@ -19,7 +19,7 @@ kernel.bin: linker.ld  $(objs_as) $(objs) $(objs_nasm)
 
 %.o: %.c
 	$(CC) -o $@ -c $^ -Wall -Wextra -nostdlib \
-	-nostartfiles -nodefaultlibs -m32 -g
+	-nostartfiles -nodefaultlibs -m32 -g -nostdinc -fno-builtin -fno-stack-protector
 
 %.o: %.s
 	$(NASM) -f elf32 -o $@ $^

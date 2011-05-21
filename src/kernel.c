@@ -11,7 +11,9 @@ void kmain(void *mboot_ptr)
     monitor_clear();  
     printf("Monitor has been cleared. mboot_ptr: %x\n", (u32int) mboot_ptr);
     
-//     initialise_paging();
+    initialise_paging();
+    
+//     monitor_write("Hello, paging world!\n");
     
     /* You could either use multiboot.h */
     /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
@@ -21,10 +23,10 @@ void kmain(void *mboot_ptr)
     
 //     asm volatile ("jmp dummyFunctionL" : : : "memory", "cc");
     
-    int addr;
+    /*int addr;
 //     asm("call magic; magic: pop %%eax; movl %%eax, %0;" : "=r"(addr) : : "eax");
     asm("movl %%ss, %0;" : "=r"(addr) : : );
-    printf("Register ss: %x\n", addr);
+    printf("Register ss: %x\n", addr);*/
     
 //     asm volatile ("int $0x3");
 //     asm volatile ("int $0x4");

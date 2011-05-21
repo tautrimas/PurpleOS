@@ -1,0 +1,1 @@
+/home/tautrimas/documents/archive/univeras/6 semestras/os/os/Makefile

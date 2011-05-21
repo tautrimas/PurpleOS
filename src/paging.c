@@ -85,12 +85,18 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable)
         if (idx == (u32int)-1)
         {
             // PANIC! no free frames!!
+            PANIC("alloc_frame: no free frames");
         }
         set_frame(idx*0x1000);
         page->present = 1;
         page->rw = (is_writeable)?1:0;
         page->user = (is_kernel)?0:1;
         page->frame = idx;
+        page->accessed = 0;
+        page->dirty = 0;
+        page->reserved1 = 0;
+        page->reserved2 = 0;
+        page->avail = 0;
     }
 }
 
@@ -130,7 +136,7 @@ void initialise_paging()
     // inside the loop body we actually change placement_address
     // by calling kmalloc(). A while loop causes this to be
     // computed on-the-fly rather than once at the start.
-    unsigned int i = 0;
+    u32int i = 0;
     while (i < placement_address)
     {
         // Kernel code is readable but not writeable from userspace.
@@ -140,8 +146,10 @@ void initialise_paging()
     // Before we enable paging, we must register our page fault handler.
     register_interrupt_handler(14, page_fault);
 
+    printf("just before paging\n");
     // Now, enable paging!
     switch_page_directory(kernel_directory);
+    printf("after paging\n");
 }
 
 void switch_page_directory(page_directory_t *dir)

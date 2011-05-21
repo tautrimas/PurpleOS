@@ -33,11 +33,11 @@ mboot:
 .set STACKSIZE, 0x4000                  # that's 16k.
 
 start:
-    movl $(stack + STACKSIZE), %esp          # set up the stack
+#    movl $(stack + STACKSIZE), %esp          # set up the stack
     
     # Reset EFLAGS. 
-    pushl $0
-    popf
+#    pushl $0
+#    popf
     
     push %ebx                           # pass Multiboot info structure
 
@@ -49,7 +49,7 @@ hang:
     hlt                                 # halt machine should kernel return
     jmp   hang
 
-.bss
+#.bss
 
-stack:
-    .lcomm stack_area, STACKSIZE                     # reserve 16k stack on a doubleword boundary
+#stack:
+#    .lcomm stack_area, STACKSIZE                     # reserve 16k stack on a doubleword boundary

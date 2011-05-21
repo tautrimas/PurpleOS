@@ -9,7 +9,7 @@
 
 typedef struct page
 {
-    u32int present    : 1;   // Page present in memory
+    /*u32int present    : 1;   // Page present in memory
     u32int rw         : 1;   // Read-only if clear, readwrite if set
     u32int user       : 1;   // Supervisor level only if clear
     u32int reserved1  : 2;
@@ -17,6 +17,13 @@ typedef struct page
     u32int dirty      : 1;   // Has the page been written to since last refresh?
     u32int reserved2  : 2;
     u32int avail      : 3;
+    u32int frame      : 20;  // Frame address (shifted right 12 bits)*/
+    u32int present    : 1;   // Page present in memory
+    u32int rw         : 1;   // Read-only if clear, readwrite if set
+    u32int user       : 1;   // Supervisor level only if clear
+    u32int accessed   : 1;   // Has the page been accessed since last refresh?
+    u32int dirty      : 1;   // Has the page been written to since last refresh?
+    u32int avail      : 7;
     u32int frame      : 20;  // Frame address (shifted right 12 bits)
 } page_t;
 

@@ -75,7 +75,7 @@ static u32int first_frame()
 // Function to allocate a frame.
 void alloc_frame(page_t *page, int is_kernel, int is_writeable)
 {
-    if (page->frame != 0)
+    if (page->frame != 0 && 0)
     {
         return;
     }
@@ -87,6 +87,7 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable)
             // PANIC! no free frames!!
             PANIC("alloc_frame: no free frames");
         }
+        printf("\nframe %d -- ", idx*0x1000);
         set_frame(idx*0x1000);
         page->present = 1;
         page->rw = (is_writeable)?1:0;
@@ -94,8 +95,8 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable)
         page->frame = idx;
         page->accessed = 0;
         page->dirty = 0;
-        page->reserved1 = 0;
-        page->reserved2 = 0;
+//         page->reserved1 = 0;
+//         page->reserved2 = 0;
         page->avail = 0;
     }
 }
@@ -139,6 +140,7 @@ void initialise_paging()
     u32int i = 0;
     while (i < placement_address)
     {
+        printf(" placement: %d", i);
         // Kernel code is readable but not writeable from userspace.
         alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
         i += 0x1000;

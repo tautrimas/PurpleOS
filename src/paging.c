@@ -75,19 +75,14 @@ static u32int first_frame()
 // Function to allocate a frame.
 void alloc_frame(page_t *page, int is_kernel, int is_writeable)
 {
-    if (page->frame != 0 && 0)
+    if (page->frame != 0)
     {
         return;
     }
     else
     {
         u32int idx = first_frame();
-        if (idx == (u32int)-1)
-        {
-            // PANIC! no free frames!!
-            PANIC("alloc_frame: no free frames");
-        }
-        printf("\nframe %d -- ", idx*0x1000);
+        
         set_frame(idx*0x1000);
         page->present = 1;
         page->rw = (is_writeable)?1:0;
@@ -140,7 +135,6 @@ void initialise_paging()
     u32int i = 0;
     while (i < placement_address)
     {
-        printf(" placement: %d", i);
         // Kernel code is readable but not writeable from userspace.
         alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
         i += 0x1000;
@@ -148,10 +142,8 @@ void initialise_paging()
     // Before we enable paging, we must register our page fault handler.
     register_interrupt_handler(14, page_fault);
 
-    printf("just before paging\n");
     // Now, enable paging!
     switch_page_directory(kernel_directory);
-    printf("after paging\n");
 }
 
 void switch_page_directory(page_directory_t *dir)
@@ -178,6 +170,7 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
     {
         u32int tmp;
         dir->tables[table_idx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t), &tmp);
+        memset(dir->tables[table_idx], 0, 0x1000);
         dir->tablesPhysical[table_idx] = tmp | 0x7; // PRESENT, RW, US.
         return &dir->tables[table_idx]->pages[address%1024];
     }
@@ -187,14 +180,13 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
     }
 }
 
-
 void page_fault(registers_t regs)
 {
     // A page fault has occurred.
     // The faulting address is stored in the CR2 register.
     u32int faulting_address;
     asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
-    
+
     // The error code gives us details of what happened.
     int present   = !(regs.err_code & 0x1); // Page not present
     int rw = regs.err_code & 0x2;           // Write operation?
@@ -208,8 +200,6 @@ void page_fault(registers_t regs)
     if (rw) {monitor_write("read-only ");}
     if (us) {monitor_write("user-mode ");}
     if (reserved) {monitor_write("reserved ");}
-    monitor_write(") at 0x");
-    monitor_write_hex(faulting_address);
-    monitor_write("\n");
+    printf(") at 0x%x\n", faulting_address);
     PANIC("Page fault");
 }

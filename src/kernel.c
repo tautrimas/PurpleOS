@@ -13,7 +13,7 @@ void kmain(void *mboot_ptr)
     
     initialise_paging();
     
-//     monitor_write("Hello, paging world!\n");
+    printf("Hello, paging world!\n");
     
     /* You could either use multiboot.h */
     /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
@@ -28,13 +28,13 @@ void kmain(void *mboot_ptr)
     asm("movl %%ss, %0;" : "=r"(addr) : : );
     printf("Register ss: %x\n", addr);*/
     
-//     asm volatile ("int $0x3");
-//     asm volatile ("int $0x4");
+    asm volatile ("int $0x3");
+    asm volatile ("int $0x4");
     
 //     asm volatile("sti");
 //     init_timer(50);
     
-//     u32int *ptr = (u32int*)0xA0000000;
-//     u32int do_page_fault = *ptr;
-//     printf("%d", do_page_fault);
+    u32int *ptr = (u32int*)0x150003;
+    u32int do_page_fault = *ptr;
+    printf("%d", do_page_fault);
 }

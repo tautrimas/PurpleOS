@@ -38,7 +38,8 @@ start:
     # Reset EFLAGS. 
 #    pushl $0
 #    popf
-    
+
+    push %esp
     push %ebx                           # pass Multiboot info structure
 
     cli

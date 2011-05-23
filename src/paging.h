@@ -52,6 +52,8 @@ typedef struct page_directory
     u32int physicalAddr;
 } page_directory_t;
 
+extern void copy_page_physical(u32int source, u32int destination);
+
 /**
    Sets up the environment, page directories etc and
    enables paging.
@@ -79,7 +81,6 @@ void page_fault(registers_t regs);
 /**
    Makes a copy of a page directory.
 **/
-page_directory_t *clone_directory(page_directory_t *src);
-
+page_directory_t* clone_directory(page_directory_t *src);
 
 #endif

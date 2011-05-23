@@ -37,22 +37,16 @@ int strlen(const char * s);
 void* memset(void *dest, int val, unsigned int len);
 
 //Copy len bytes from src to dest.
-extern inline void* memcpy(u8int *dest, const u8int *src, u32int n)
-{
-    __asm__("cld\n\t"
-        "rep\n\t"
-        "movsb"
-        ::"c" (n),"S" (src),"D" (dest)
-        :"cx","si","di");
-    return dest;
-}
-// void* memcpy(u8int *dest, const u8int *src, u32int len)
-// {
-//     const u8int *sp = (const u8int *)src;
-//     u8int *dp = (u8int *)dest;
-//     for(; len != 0; len--) *dp++ = *sp++;
-//     return dest
-// }
+//extern inline void* memcpy(u8int *dest, const u8int *src, u32int n)
+//{
+//    __asm__("cld\n\t"
+//        "rep\n\t"
+//        "movsb"
+//        ::"c" (n),"S" (src),"D" (dest)
+//        :"cx","si","di");
+//    return dest;
+//}
+void* memcpy(u8int *dest, const u8int *src, u32int len);
 
 // Compare two strings. Should return -1 if 
 // str1 < str2, 0 if they are equal or 1 otherwise.

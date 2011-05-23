@@ -2,9 +2,9 @@
 
 all: floppy.img
 
-srcs=src/kernel.c src/monitor.c src/common.c src/descriptor_tables.c src/isr.c src/timer.c src/paging.c src/kheap.c
+srcs=src/kernel.c src/monitor.c src/common.c src/descriptor_tables.c src/isr.c src/timer.c src/paging.c src/kheap.c src/task.c
 objs=$(srcs:.c=.o)
-srcs_nasm=src/gdt.s src/interrupt.s
+srcs_nasm=src/gdt.s src/interrupt.s src/process.s
 objs_nasm=$(srcs_nasm:.s=.o)
 srcs_as=src/loader.asm
 objs_as=$(srcs_as:.asm=.o)

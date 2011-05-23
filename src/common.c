@@ -47,6 +47,14 @@ void* memset(void *dest, int val, unsigned int len)
     return dest;
 }
 
+void* memcpy(u8int *dest, const u8int *src, u32int len)
+{
+     const u8int *sp = (const u8int *)src;
+     u8int *dp = (u8int *)dest;
+     for(; len != 0; len--) *dp++ = *sp++;
+     return dest;
+}
+
 extern void panic(const char *message, const char *file, u32int line)
 {
     // We encountered a massive problem and have to stop.

@@ -36,5 +36,5 @@ void kmain(void *mboot_ptr)
     
     u32int *ptr = (u32int*)0x150003;
     u32int do_page_fault = *ptr;
-    printf("%d", do_page_fault);
+    printf("got %d\n", do_page_fault);
 }

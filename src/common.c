@@ -34,7 +34,7 @@ int min(int a, int b) {
     else return b;
 }
 
-inline int strlen(const char* str) {
+int strlen(const char* str) {
     int i;
     for (i = 0; str[i] != 0; i++) {}
     return i;
@@ -60,6 +60,7 @@ extern void panic(const char *message, const char *file, u32int line)
     monitor_write_dec(line);
     monitor_write("\n");
     // Halt by going into an infinite loop.
+    asm volatile ("hlt");
     for(;;);
 }
 
@@ -76,5 +77,6 @@ extern void panic_assert(const char *file, u32int line, const char *desc)
     monitor_write_dec(line);
     monitor_write("\n");
     // Halt by going into an infinite loop.
+    asm volatile ("hlt");
     for(;;);
 }

@@ -7,6 +7,8 @@
 #include "common.h"
 #include "isr.h"
 
+#define STACK_TOP 0xE0000000
+
 typedef struct page
 {
     /*u32int present    : 1;   // Page present in memory

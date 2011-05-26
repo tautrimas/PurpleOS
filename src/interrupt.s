@@ -67,7 +67,15 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
-IRQ   0,    32
+
+; exceptional irq0
+  global irq0
+  irq0:
+    cli
+    push byte 0
+    push byte 32
+    jmp irq_0_stub
+
 IRQ   1,    33
 IRQ   2,    34
 IRQ   3,    35
@@ -146,5 +154,40 @@ irq_common_stub:
     sti
     iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
 
+; in task.c
+extern switch_task
 
+irq_0_stub:
+    ;Notice there is no IRQ number or error code - we don't need them
+
+    pusha          ;Push all standard registers
+    push ds        ;Push segment d
+    push es        ;Push segmetn e
+    push fs        ; ''
+    push gs        ; ''
+
+    mov eax, 0x10  ;Get kernel data segment
+    mov ds, eax    ;Put it in the data segment registers
+    mov es, eax
+    mov fs, eax
+    mov gs, eax
+
+    push esp       ;Push pointer to all the stuff we just pushed
+    call switch_task ;Call C code
+
+    mov esp, eax   ;Replace the stack with what the C code gave us
+
+    mov al, 0x20   ;Port number AND command number to Acknowledge IRQ
+    out 0x20, al     ;Acknowledge IRQ, so we keep getting interrupts
+
+    pop gs         ;Put the data segments back
+    pop fs
+    pop es
+    pop ds
+
+    popa           ;Put the standard registers back
+    add esp, 8
+    ;We didn't push an error code or IRQ number, so we don't have to edit esp now
+    sti
+    iret           ;Interrupt-Return
         

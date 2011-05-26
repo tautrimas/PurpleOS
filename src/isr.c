@@ -15,6 +15,10 @@ void register_interrupt_handler(u8int n, isr_t handler)
     interrupt_handlers[n] = handler;
 }
 
+void register_interrupt_handler2(u8int n, isr2_t handler) {
+    interrupt_handlers[n] = (isr_t)handler;
+}
+
 // This gets called from our ASM interrupt handler stub.
 void isr_handler(registers_t regs)
 {

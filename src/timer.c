@@ -9,22 +9,23 @@
 u32int tick = 0;
 int timer_lock_free = 1;
 
-static void timer_callback(registers_t regs)
-{
-    tick++;
-    if (timer_lock_free == 1 && tick % 20 == 0) {
-        timer_lock_free = 0;
-        printf("ENTER switch");
-        switch_task();
-        printf("EXIT switch");
-        timer_lock_free = 1;
-    }
-}
+// static void timer_callback(registers_t regs)
+// {
+//     if (&regs) {}
+//     tick++;
+//     if (timer_lock_free == 1 && tick % 20 == 0) {
+//         timer_lock_free = 0;
+//         printf("ENTER switch");
+//         switch_task();
+//         printf("EXIT switch");
+//         timer_lock_free = 1;
+//     }
+// }
 
 void init_timer(u32int frequency)
 {
     // Firstly, register our timer callback.
-    register_interrupt_handler(IRQ0, &timer_callback);
+    register_interrupt_handler2(IRQ0, &switch_task);
 
     // The value we send to the PIT is the value to divide it's input clock
     // (1193180 Hz) by, to get our required frequency. Important to note is

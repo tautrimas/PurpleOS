@@ -40,5 +40,7 @@ typedef struct registers
 // first parameter.
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(u8int n, isr_t handler);
+typedef u32int (*isr2_t)(u32int);
+void register_interrupt_handler2(u8int n, isr2_t handler);
 
 #endif

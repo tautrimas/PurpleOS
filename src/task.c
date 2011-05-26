@@ -128,7 +128,6 @@ u32int switch_task(u32int oldEsp) {
     if (!current_task) {
         current_task = ready_queue;
     }
-
     continue_tasking();
 
     return current_task->esp; //Return new stack pointer to ASM
@@ -300,7 +299,7 @@ int create_task(void (*thread)()) {
     mov %1, %%esp; \
     " : : "r"(directory->physicalAddr), "r"(current_esp), "r"((u32int)thread) : "ebx");
     
-    int stack_depth = 14 * 4;
+    int stack_depth = 12 * 4;
     
     // Create a new process.
     task_t *new_task = (task_t*)kmalloc(sizeof(task_t));

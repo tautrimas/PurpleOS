@@ -8,6 +8,15 @@ u32int initial_esp;
 
 u32int max_heap_size = 0x100000;
 
+void taskCode() {
+    int i = 0;
+    while (1) {
+        if (i % 20000000 == 0)
+            printf("loop %d\n", getpid());
+        i++;
+    }
+}
+
 void kmain(void *mboot_ptr, u32int initial_stack)
 {
     initial_esp = initial_stack;
@@ -28,12 +37,14 @@ void kmain(void *mboot_ptr, u32int initial_stack)
 
     // Start multitasking.
     initialise_tasking();
-    //init_timer(50);  
+    init_timer(50);
+
 
     // Initialise the initial ramdisk, and set it as the filesystem root.
 //    fs_root = initialise_initrd(initrd_location);
 
     printf("Monitor has been cleared. mboot_ptr: %x\n", (u32int) mboot_ptr);
+    create_task(&taskCode);
 //     int ret = fork();
     int ret = 0;
 //     if (ret == 0)

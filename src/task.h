@@ -37,4 +37,7 @@ void move_stack(void *new_stack_start, u32int size);
 // Returns the pid of the current process.
 int getpid();
 
+inline void pause_tasking();
+inline void continue_tasking();
+
 #endif

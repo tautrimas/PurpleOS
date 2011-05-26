@@ -3,6 +3,7 @@
 //             but rewritten for JamesM's kernel tutorials.
 
 #include "monitor.h"
+#include "task.h"
 
 // The VGA framebuffer starts at 0xB8000.
 u16int *video_memory = (u16int *)0xB8000;
@@ -168,6 +169,7 @@ void itoa(char *result, const char base, const unsigned int d) {
    function printf.  */
 int printf (const char *format, ...)
 {
+pause_tasking();
   char **arg = (char **) &format;
   int c;
   char buf[20];
@@ -209,6 +211,7 @@ int printf (const char *format, ...)
             }
         }
     }
+continue_tasking();
   return strlen(buf);
 }
 

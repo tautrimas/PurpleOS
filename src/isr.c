@@ -32,6 +32,7 @@ void isr_handler(registers_t regs)
         monitor_write("unhandled interrupt: ");
         monitor_write_dec(regs.int_no);
         monitor_put('\n');
+	PANIC("unhandled interrupt:");
     }
 }
 

@@ -96,8 +96,27 @@ void move_stack(void *new_stack_start, u32int size)
   asm volatile("mov %0, %%ebp" : : "r" (new_base_pointer));
 }
 
+// In timer.c
+extern int timer_lock_free;
+
+inline void pause_tasking() {
+    timer_lock_free = 0;
+}
+
+inline void continue_tasking() {
+    timer_lock_free = 1;
+}
+
 u32int switch_task(u32int oldEsp) {
     // If we haven't initialised tasking yet, just return.
+    if (!timer_lock_free) {
+	return oldEsp;
+    }
+    
+    pause_tasking();
+    
+    printf("switch %d*", current_task->id);
+    
     if (!current_task) {
         return oldEsp;
     }
@@ -109,6 +128,8 @@ u32int switch_task(u32int oldEsp) {
     if (!current_task) {
         current_task = ready_queue;
     }
+
+    continue_tasking();
 
     return current_task->esp; //Return new stack pointer to ASM
 }
@@ -181,8 +202,6 @@ u32int switch_task(u32int oldEsp) {
 //       jmp *%%ecx           "
 //                  : : "r"(eip), "r"(esp), "r"(ebp), "r"(current_directory->physicalAddr));
 
-// In timer.c
-extern int timer_lock_free;
 
 // int fork()
 // {
@@ -245,18 +264,48 @@ extern int timer_lock_free;
 int create_task(void (*thread)()) {
     
     asm volatile("cli");
+
+    printf("creating new task\n");
     
-    u32int *stack;
+//     u32int *stack;
 
 //     task_t *parent_task = (task_t*)current_task;
 
     // Clone the address space.
     page_directory_t *directory = clone_directory(current_directory);
 
+    u32int current_esp;
+    u32int current_ebp;
+    asm volatile ("mov %%esp, %0" : "=r"(current_esp));
+    asm volatile ("mov %%ebp, %0" : "=r"(current_ebp));
+
+    asm volatile("mov %%cr3, %%ebx; \
+    mov %0, %%cr3; \
+    mov %%ebp, %%esp; \
+    mov %1, %%esp; \
+	push $0x0202; \
+	push $0x08; \
+	push %2; \
+	push $0; \
+	push $32; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0; \
+	push $0x10; \
+    mov %%ebx, %%cr3; \
+    " : : "r"(directory->physicalAddr), "r"(current_esp), "r"((u32int)thread) : "ebx");
+    
+    int stack_depth = 14 * 4;
+    
     // Create a new process.
     task_t *new_task = (task_t*)kmalloc(sizeof(task_t));
 
-    new_task->esp = STACK_TOP;
+    new_task->esp = current_ebp - stack_depth;
     new_task->id = next_pid++;
     new_task->page_directory = directory;
     new_task->next = 0;
@@ -266,30 +315,36 @@ int create_task(void (*thread)()) {
         tmp_task = tmp_task->next;
     tmp_task->next = new_task;
 
-    stack = (u32int*)STACK_TOP; //This makes a pointer to the stack for us
-
-    //First, this stuff is pushed by the processor
-    *--stack = 0x0202; //This is EFLAGS
-    *--stack = 0x08;   //This is CS, our code segment
-    *--stack = (u32int)thread; //This is EIP
-
-    //Next, the stuff pushed by 'pusha'
-    *--stack = 0; //EDI
-    *--stack = 0; //ESI
-    *--stack = 0; //EBP
-    *--stack = 0; //Just an offset, no value
-    *--stack = 0; //EBX
-    *--stack = 0; //EDX
-    *--stack = 0; //ECX
-    *--stack = 0; //EAX
+//     stack = (u32int*)STACK_TOP; //This makes a pointer to the stack for us
+// 
+//     //First, this stuff is pushed by the processor
+//     *--stack = 0x0202; //This is EFLAGS
+//     *--stack = 0x08;   //This is CS, our code segment
+//     *--stack = (u32int)thread; //This is EIP
+// 
+//     // error code and irq number
+//     *--stack = 0;
+//     *--stack = 32;
+// 
+//     //Next, the stuff pushed by 'pusha'
+//     *--stack = 0; //EDI
+//     *--stack = 0; //ESI
+//     *--stack = 0; //EBP
+//     *--stack = 0; //Just an offset, no value
+//     *--stack = 0; //EBX
+//     *--stack = 0; //EDX
+//     *--stack = 0; //ECX
+//     *--stack = 0; //EAX
+// 
+//     *--stack = 0x10; // ds
 
     //Now these are the data segments pushed by the IRQ handler
-    *--stack = 0x10; //DS
-    *--stack = 0x10; //ES
-    *--stack = 0x10; //FS
-    *--stack = 0x10; //GS
+//     *--stack = 0x10; //DS
+//     *--stack = 0x10; //ES
+//     *--stack = 0x10; //FS
+//     *--stack = 0x10; //GS
 
-    new_task->esp = (u32int)stack; //Update the stack pointer
+//     new_task->esp = (u32int)stack; //Update the stack pointer
 
     asm volatile("sti");
 

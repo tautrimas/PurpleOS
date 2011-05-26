@@ -161,18 +161,21 @@ irq_0_stub:
     ;Notice there is no IRQ number or error code - we don't need them
 
     pusha          ;Push all standard registers
-    push ds        ;Push segment d
-    push es        ;Push segmetn e
-    push fs        ; ''
-    push gs        ; ''
+    ;push ds        ;Push segment d
+    ;push es        ;Push segmetn e
+    ;push fs        ; ''
+    ;push gs        ; ''
 
-    mov eax, 0x10  ;Get kernel data segment
-    mov ds, eax    ;Put it in the data segment registers
-    mov es, eax
-    mov fs, eax
-    mov gs, eax
+    mov ax, ds               ; Lower 16-bits of eax = ds.
+    push eax                 ; save the data segment descriptor
 
-    push esp       ;Push pointer to all the stuff we just pushed
+    mov ax, 0x10  ; load the kernel data segment descriptor
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    push esp       ;Push pointer to old esp
     call switch_task ;Call C code
 
     mov esp, eax   ;Replace the stack with what the C code gave us
@@ -180,14 +183,14 @@ irq_0_stub:
     mov al, 0x20   ;Port number AND command number to Acknowledge IRQ
     out 0x20, al     ;Acknowledge IRQ, so we keep getting interrupts
 
-    pop gs         ;Put the data segments back
-    pop fs
-    pop es
-    pop ds
+    pop ebx        ; reload the original data segment descriptor
+    mov ds, bx
+    mov es, bx
+    mov fs, bx
+    mov gs, bx
 
     popa           ;Put the standard registers back
     add esp, 8
-    ;We didn't push an error code or IRQ number, so we don't have to edit esp now
     sti
     iret           ;Interrupt-Return
         

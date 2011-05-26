@@ -282,7 +282,6 @@ int create_task(void (*thread)()) {
     asm volatile("mov %%cr3, %%ebx; \
     mov %0, %%cr3; \
     mov %%ebp, %%esp; \
-    mov %1, %%esp; \
 	push $0x0202; \
 	push $0x08; \
 	push %2; \
@@ -298,6 +297,7 @@ int create_task(void (*thread)()) {
 	push $0; \
 	push $0x10; \
     mov %%ebx, %%cr3; \
+    mov %1, %%esp; \
     " : : "r"(directory->physicalAddr), "r"(current_esp), "r"((u32int)thread) : "ebx");
     
     int stack_depth = 14 * 4;

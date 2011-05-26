@@ -7,6 +7,7 @@
 #include "paging.h"
 #include "common.h"
 #include "kheap.h"
+#include "monitor.h"
 
 // The currently running task.
 volatile task_t *current_task;
@@ -99,13 +100,12 @@ void move_stack(void *new_stack_start, u32int size)
 void switch_task()
 {
     // If we haven't initialised tasking yet, just return.
-    if (!current_task)
+    if (!current_task) {
         return;
+    }
 
     // Read esp, ebp now for saving later on.
     u32int esp, ebp, eip;
-    asm volatile("mov %%esp, %0" : "=r"(esp));
-    asm volatile("mov %%ebp, %0" : "=r"(ebp));
 
     // Read the instruction pointer. We do some cunning logic here:
     // One of two things could have happened when this function exits - 
@@ -116,11 +116,20 @@ void switch_task()
     // In the second case we need to return immediately. To detect it we put a dummy
     // value in EAX further down at the end of this function. As C returns values in EAX,
     // it will look like the return value is this dummy value! (0x12345).
+    
+    printf("next task %x\n", ready_queue); // doesn't print!!!!
+    
+//     asm volatile("pusha" ::: "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
+    asm volatile("mov %%ebp, %0" : "=r"(ebp));
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+    
     eip = read_eip();
 
     // Have we just switched tasks?
-    if (eip == 0x12345)
+    if (eip == 0x12345) {
+//         asm volatile ("popa" : : : "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
         return;
+    }
 
     // No, we didn't switch tasks. Let's save some register values and switch.
     current_task->eip = eip;
@@ -130,7 +139,10 @@ void switch_task()
     // Get the next task to run.
     current_task = current_task->next;
     // If we fell off the end of the linked list start again at the beginning.
-    if (!current_task) current_task = ready_queue;
+    if (!current_task) {
+        current_task = ready_queue;
+        printf("ready_queue");
+    }
 
     eip = current_task->eip;
     esp = current_task->esp;
@@ -138,6 +150,7 @@ void switch_task()
 
     // Make sure the memory manager knows we've changed page directory.
     current_directory = current_task->page_directory;
+    
     // Here we:
     // * Stop interrupts so we don't get interrupted.
     // * Temporarily puts the new EIP location in ECX.
@@ -159,6 +172,9 @@ void switch_task()
       jmp *%%ecx           "
                  : : "r"(eip), "r"(esp), "r"(ebp), "r"(current_directory->physicalAddr));
 }
+
+// In timer.c
+extern int timer_lock_free;
 
 int fork()
 {
@@ -186,16 +202,21 @@ int fork()
         tmp_task = tmp_task->next;
     tmp_task->next = new_task;
 
+//     asm volatile("pusha" ::: "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
+    
+        u32int esp; asm volatile("mov %%esp, %0" : "=r"(esp));
+        u32int ebp; asm volatile("mov %%ebp, %0" : "=r"(ebp));
     // This will be the entry point for the new process.
     u32int eip = read_eip();
-
+    
+//     asm volatile("popa" : : : "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
+    
+    timer_lock_free = 1;
 
     // We could be the parent or the child here - check.
     if (current_task == parent_task)
     {
         // We are the parent, so set up the esp/ebp/eip for our child.
-        u32int esp; asm volatile("mov %%esp, %0" : "=r"(esp));
-        u32int ebp; asm volatile("mov %%ebp, %0" : "=r"(ebp));
         new_task->esp = esp;
         new_task->ebp = ebp;
         new_task->eip = eip;
@@ -205,6 +226,8 @@ int fork()
     }
     else
     {
+        printf("next task fork end\n");
+        asm volatile("sti");
         // We are the child.
         return 0;
     }

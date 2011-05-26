@@ -4,10 +4,12 @@
 //            Written for JamesM's kernel development tutorials.
 
 #include "kheap.h"
+#include "monitor.h"
 
 // end is defined in the linker script.
 extern u32int end;
 u32int placement_address = (u32int)&end;
+extern u32int max_heap_size;
 
 u32int kmalloc_int(u32int sz, int align, u32int *phys)
 {
@@ -25,7 +27,11 @@ u32int kmalloc_int(u32int sz, int align, u32int *phys)
     {
         *phys = placement_address;
     }
+//     printf("Allocated %x bytes... ",(u32int)&end );
     u32int tmp = placement_address;
+    if (tmp >= (u32int)&end + max_heap_size) {
+        PANIC("Heap too large");
+    }
     placement_address += sz;
     return tmp;
 }

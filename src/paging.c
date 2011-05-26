@@ -17,6 +17,8 @@ u32int nframes;
 
 // Defined in kheap.c
 extern u32int placement_address;
+// Defined in kernel.c
+extern u32int max_heap_size;
 
 // Macros used in the bitset algorithms.
 #define INDEX_FROM_BIT(a) (a/(8*4))
@@ -146,7 +148,7 @@ void initialise_paging()
     // Allocate a lil' bit extra so the kernel heap can be
     // initialised properly.
     u32int i = 0;
-    while (i < placement_address+0x1000)
+    while (i < placement_address+max_heap_size+0x1000)
     {
         // Kernel code is readable but not writeable from userspace.
         alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
@@ -162,6 +164,7 @@ void initialise_paging()
 
     // Now, enable paging!
     switch_page_directory(kernel_directory);
+
 
     // Initialise the kernel heap.
 //    kheap = create_heap(KHEAP_START, KHEAP_START+KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);

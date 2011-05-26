@@ -4,13 +4,21 @@
 #include "timer.h"
 #include "isr.h"
 #include "task.h"
+#include "monitor.h"
 
 u32int tick = 0;
+int timer_lock_free = 1;
 
 static void timer_callback(registers_t regs)
 {
     tick++;
-    switch_task();
+    if (timer_lock_free == 1 && tick % 20 == 0) {
+        timer_lock_free = 0;
+        printf("ENTER switch");
+        switch_task();
+        printf("EXIT switch");
+        timer_lock_free = 1;
+    }
 }
 
 void init_timer(u32int frequency)

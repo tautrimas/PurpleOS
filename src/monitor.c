@@ -143,10 +143,10 @@ void monitor_write(const char *c)
     }
 }
 
-void itoa(char *result, const char base, const int d) {
+void itoa(char *result, const char base, const unsigned int d) {
     char* digits = "0123456789abcdef";
     int size = 0;
-    int copy = d;
+    unsigned int copy = d;
     while (copy > 0) {
         copy /= base;
         size++;

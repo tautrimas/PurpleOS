@@ -15,8 +15,6 @@ void monitor_clear();
 // Output a null-terminated ASCII string to the monitor.
 void monitor_write(const char *c);
 
-void itoa(char *result, const char base, const int d);
-
 int printf (const char *format, ...);
 
 void monitor_write_hex(const u32int n);

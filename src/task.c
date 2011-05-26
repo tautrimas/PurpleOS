@@ -112,6 +112,7 @@ u32int new_directory_address;
 u32int switch_task(u32int oldEsp) {
     // If we haven't initialised tasking yet, just return.
     if (!timer_lock_free) {
+	new_directory_address = current_task->page_directory->physicalAddr;
 	return oldEsp;
     }
     
@@ -142,8 +143,6 @@ u32int switch_task(u32int oldEsp) {
 int create_task(void (*thread)()) {
     
     asm volatile("cli");
-
-    printf("creating new task\n");
     
 //     u32int *stack;
 

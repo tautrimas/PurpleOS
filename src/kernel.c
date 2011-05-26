@@ -27,12 +27,12 @@ int factorial(const int n) {
 
 void taskFactorial() {
     int i = 0;
-    int ticks = 0;printf("Fac");
+    int ticks = 0;
     while (1) {
-        if (i % 10000000 == 0) {
+        if (i % 1000000 == 0) {
 	    ticks++;
 	    int x = factorial(ticks % 10 + 1);
-	    printf("Factorial of %d is %d\n", ticks - 1, x);
+	    printf("Factorial pid%d of %d is %d\n", getpid(), ticks - 1, x);
 	}
         i++;
     }
@@ -58,7 +58,7 @@ void kmain(void *mboot_ptr, u32int initial_stack)
 
     // Start multitasking.
     initialise_tasking();
-    init_timer(50);
+    init_timer(20);
 
 
     // Initialise the initial ramdisk, and set it as the filesystem root.
@@ -66,18 +66,14 @@ void kmain(void *mboot_ptr, u32int initial_stack)
 
     printf("Monitor has been cleared. mboot_ptr: %x\n", (u32int) mboot_ptr);
 //     create_task(&taskCode);
-//     create_task(&taskCode);
-//     create_task(&taskCode);
-//     create_task(&taskCode);
-//     create_task(&taskCode);
-    create_task(&taskCode);
     create_task(&taskFactorial);
-    int i = 0;
-    while (1) {
-        if (i % 10000000 == 0)
-            printf("loop %d\n", getpid());
-        i++;
-    }
+    create_task(&taskFactorial);
+//     int i = 0;
+//     while (1) {
+//         if (i % 10000000 == 0)
+//             printf("loop %d\n", getpid());
+//         i++;
+//     }
     // Create a new process in a new address space which is a clone of this.
 //     int ret = fork();
 // //     int ret = 0;

@@ -70,6 +70,7 @@ mkdir -p $mntpath/boot/grub
 cp menu.lst $mntpath/boot/grub/grub.conf
 cp menu.lst $mntpath/boot/grub/menu.lst
 cp kernel.bin $mntpath
+cp README $mntpath
 
 # 12. Unmount the image. Again. :P
 umount $mntpath

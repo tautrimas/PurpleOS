@@ -2,3 +2,4 @@ timeout=1
 
 title PurpleOS
 kernel /kernel.bin
+module /README

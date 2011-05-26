@@ -9,6 +9,7 @@
 // end is defined in the linker script.
 extern u32int end;
 u32int placement_address = (u32int)&end;
+// Defined in kernel.c
 extern u32int max_heap_size;
 
 u32int kmalloc_int(u32int sz, int align, u32int *phys)

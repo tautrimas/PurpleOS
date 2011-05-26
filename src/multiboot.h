@@ -46,6 +46,6 @@ struct multiboot
     u32int vbe_interface_len;
 }  __attribute__((packed));
 
-typedef struct multiboot_header multiboot_header_t;
+typedef struct multiboot multiboot_header_t;
 
 #endif

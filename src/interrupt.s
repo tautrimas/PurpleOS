@@ -156,6 +156,7 @@ irq_common_stub:
 
 ; in task.c
 extern switch_task
+extern new_directory_address
 
 irq_0_stub:
     ;Notice there is no IRQ number or error code - we don't need them
@@ -178,7 +179,9 @@ irq_0_stub:
     push esp       ;Push pointer to old esp
     call switch_task ;Call C code
 
-    mov esp, eax   ;Replace the stack with what the C code gave us
+    mov esp, eax   ;Replace the stack with what the C code gave us. ebp is the same for all threads.
+    mov eax, [new_directory_address]
+    mov cr3, eax ; Install new directory
 
     mov al, 0x20   ;Port number AND command number to Acknowledge IRQ
     out 0x20, al     ;Acknowledge IRQ, so we keep getting interrupts

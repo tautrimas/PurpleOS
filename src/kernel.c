@@ -9,10 +9,31 @@ u32int initial_esp;
 u32int max_heap_size = 0x100000;
 
 void taskCode() {
+    if (getpid() == 2) {
+	create_task(&taskCode);
+    }
     int i = 0;
     while (1) {
         if (i % 20000000 == 0)
-            printf("loop %d\n", getpid());
+            printf("loop2 %d\n", getpid());
+        i++;
+    }
+}
+
+int factorial(const int n) {
+	    if (n == 1) return 1;
+	    else return factorial(n - 1) * n;
+}
+
+void taskFactorial() {
+    int i = 0;
+    int ticks = 0;printf("Fac");
+    while (1) {
+        if (i % 10000000 == 0) {
+	    ticks++;
+	    int x = factorial(ticks % 10 + 1);
+	    printf("Factorial of %d is %d\n", ticks - 1, x);
+	}
         i++;
     }
 }
@@ -44,21 +65,16 @@ void kmain(void *mboot_ptr, u32int initial_stack)
 //    fs_root = initialise_initrd(initrd_location);
 
     printf("Monitor has been cleared. mboot_ptr: %x\n", (u32int) mboot_ptr);
+//     create_task(&taskCode);
+//     create_task(&taskCode);
+//     create_task(&taskCode);
+//     create_task(&taskCode);
+//     create_task(&taskCode);
     create_task(&taskCode);
-//     int ret = fork();
-    int ret = 0;
-//     if (ret == 0)
-//         fork();
-
-    monitor_write("fork() returned ");
-    monitor_write_hex(ret);
-    monitor_write(", and getpid() returned ");
-    monitor_write_hex(getpid());
-    monitor_write("\n============================================================================\n");  
-    
+    create_task(&taskFactorial);
     int i = 0;
     while (1) {
-        if (i % 20000000 == 0)
+        if (i % 10000000 == 0)
             printf("loop %d\n", getpid());
         i++;
     }
